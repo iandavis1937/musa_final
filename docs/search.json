@@ -4,7 +4,7 @@
     "href": "about.html",
     "title": "About Me",
     "section": "",
-    "text": "Hello everyone\n\n\nOn this about page, you might want to add more information about yourself, the project, or course.\n\n\nMy name is Eric Delmelle, the instructor for the course.\nYou can find more information about me on my personal website.\nThis site is an example site showing how to use Quarto for the final project for MUSA 550, during fall 2024.\nWrite something about you\n\nor about something you like",
+    "text": "Hello!\n\n\nMy name is Ian Davis.\nI’m an early-career data scientist and public interest technologist interested in program evaluation, quantitative social science methods, and collective decision-making technology.\nSome of my most recent roles have been as a Research Assistant/Data Analyst at the University of Pennsylvania and Stanford University, as well as a Civic Digital Data Analyst Fellow at the Internal Revenue Service.\nYou can find more information about me on my personal website.\nSend me a LinkedIn message or a music rec if you like! I’m always appreciative of help escaping the recommendation algorithm.",
     "crumbs": [
       "About Me"
     ]
@@ -101,7 +101,7 @@
     "href": "analysis/2-static-images.html",
     "title": "Showing static visualizations",
     "section": "",
-    "text": "This page is generated from a Jupyter notebook and demonstrates how to generate static visualizations with matplotlib, pandas, and seaborn.\nStart by importing the packages we need:\nimport pandas as pd\nfrom matplotlib import pyplot as plt\nimport seaborn as sns\nLoad the “Palmer penguins” dataset from week 2:\n# Load data on Palmer penguins\npenguins = pd.read_csv(\"https://raw.githubusercontent.com/MUSA-550-Fall-2023/week-2/main/data/penguins.csv\")\n# Show the first ten rows\npenguins.head(n=10)    \n\n\n\n\n\n\n\n\nspecies\nisland\nbill_length_mm\nbill_depth_mm\nflipper_length_mm\nbody_mass_g\nsex\nyear\n\n\n\n\n0\nAdelie\nTorgersen\n39.1\n18.7\n181.0\n3750.0\nmale\n2007\n\n\n1\nAdelie\nTorgersen\n39.5\n17.4\n186.0\n3800.0\nfemale\n2007\n\n\n2\nAdelie\nTorgersen\n40.3\n18.0\n195.0\n3250.0\nfemale\n2007\n\n\n3\nAdelie\nTorgersen\nNaN\nNaN\nNaN\nNaN\nNaN\n2007\n\n\n4\nAdelie\nTorgersen\n36.7\n19.3\n193.0\n3450.0\nfemale\n2007\n\n\n5\nAdelie\nTorgersen\n39.3\n20.6\n190.0\n3650.0\nmale\n2007\n\n\n6\nAdelie\nTorgersen\n38.9\n17.8\n181.0\n3625.0\nfemale\n2007\n\n\n7\nAdelie\nTorgersen\n39.2\n19.6\n195.0\n4675.0\nmale\n2007\n\n\n8\nAdelie\nTorgersen\n34.1\n18.1\n193.0\n3475.0\nNaN\n2007\n\n\n9\nAdelie\nTorgersen\n42.0\n20.2\n190.0\n4250.0\nNaN\n2007",
+    "text": "This page is generated from a Jupyter notebook and demonstrates how to generate static visualizations with matplotlib, pandas, and seaborn.\nStart by importing the packages we need:\n\nimport requests\nimport pandas as pd\nfrom matplotlib import pyplot as plt\nimport seaborn as sns\n\n\n# # Set query parameters.\n# parameters = {\n#   \"email\": \"iandavis1937@gmail.com\",\n#   \"key\": \"HT98xlCQ1BGVditgq7fD\",\n#   \"country\": \"Mexico\", \n#   \"year\": 2023,\n#   \"fields\": \"event_id_cnty|event_date|event_type|country\",\n#   \"limit\": 3000\n# }\n\n# # Request the data as a JSON file and pass paramenters as an argument (params=)\n# response_params_dic = requests.get(\"https://api.acleddata.com/acled/read\", params= parameters)\n\n# if response_params_dic.json()['status'] == 200:\n#   print(\"Success: Take a peek to the returned JSON structure.\")\n\n# print(response_params_dic.json())\n\n{'status': 403, 'success': False, 'count': 0, 'error': {'status': 403, 'message': 'Your account is restricted to only downloading the data via the Data Export Tool. Please contact access@acleddata.com to discuss extending your access to the API.'}}\n\n\n\ndf = pd.read_csv(\"./data/2024-09-01-2024-11-26-Mexico.csv\")\nprint(df.columns)\nprint(df['location'].head())\nprint(df['geo_precision'].head())\ndf.head(n=5)\n\nIndex(['event_id_cnty', 'event_date', 'year', 'time_precision',\n       'disorder_type', 'event_type', 'sub_event_type', 'actor1',\n       'assoc_actor_1', 'inter1', 'actor2', 'assoc_actor_2', 'inter2',\n       'interaction', 'civilian_targeting', 'iso', 'region', 'country',\n       'admin1', 'admin2', 'admin3', 'location', 'latitude', 'longitude',\n       'geo_precision', 'source', 'source_scale', 'notes', 'fatalities',\n       'tags', 'timestamp', 'population_1km', 'population_2km',\n       'population_5km', 'population_best'],\n      dtype='object')\n0                  San Quintin\n1                      Tijuana\n2    San Francisco de Campeche\n3           Acapulco de Juarez\n4           Acapulco de Juarez\nName: location, dtype: object\n0    1\n1    1\n2    1\n3    2\n4    1\nName: geo_precision, dtype: int64\n\n\n\n\n\n\n\n\n\nevent_id_cnty\nevent_date\nyear\ntime_precision\ndisorder_type\nevent_type\nsub_event_type\nactor1\nassoc_actor_1\ninter1\n...\nsource\nsource_scale\nnotes\nfatalities\ntags\ntimestamp\npopulation_1km\npopulation_2km\npopulation_5km\npopulation_best\n\n\n\n\n0\nMEX95693\n22 November 2024\n2024\n2\nDemonstrations\nProtests\nPeaceful protest\nProtesters (Mexico)\nLGBTQ+ (Mexico)\nProtesters\n...\nLa Jornada\nNational\nAround 22 November 2024 (as reported), in San ...\n0\ncrowd size=no report\n1732580204\n5047.0\n5939\n15168\n5047.0\n\n\n1\nMEX95702\n22 November 2024\n2024\n2\nDemonstrations\nProtests\nPeaceful protest\nProtesters (Mexico)\nLabor Group (Mexico)\nProtesters\n...\nAFN - Tijuana; La Jornada\nSubnational-National\nAround 22 November 2024 (as reported), in Tiju...\n0\ncrowd size=no report\n1732580204\n8664.0\n51062\n54534\n8664.0\n\n\n2\nMEX95707\n22 November 2024\n2024\n2\nDemonstrations\nProtests\nPeaceful protest\nProtesters (Mexico)\nNaN\nProtesters\n...\nTribuna Campeche\nSubnational\nAround 22 November 2024 (as reported), in San ...\n0\ncrowd size=no report\n1732580204\n11992.0\n42048\n234206\n11992.0\n\n\n3\nMEX95778\n22 November 2024\n2024\n2\nDemonstrations\nProtests\nPeaceful protest\nProtesters (Mexico)\nNaN\nProtesters\n...\nEl Sol de Acapulco\nSubnational\nAround 22 November 2024 (as reported), around ...\n0\ncrowd size=no report\n1732580204\n6003.0\n24485\n53920\n6003.0\n\n\n4\nMEX95779\n22 November 2024\n2024\n2\nDemonstrations\nProtests\nPeaceful protest\nProtesters (Mexico)\nWomen (Mexico)\nProtesters\n...\nEl Sol de Acapulco\nSubnational\nAround 22 November 2024 (as reported), in Acap...\n0\ncrowd size=no report\n1732580204\n6003.0\n24485\n53920\n6003.0\n\n\n\n\n5 rows × 35 columns\n\n\n\n\n# # Setup a dict to hold colors for each species\n# color_map = {\"Adelie\": \"#1f77b4\", \"Gentoo\": \"#ff7f0e\", \"Chinstrap\": \"#D62728\"}\n\n# # Initialize the figure \"fig\" and axes \"ax\"\n# fig, ax = plt.subplots(figsize=(10, 6))\n\n# # Group the data frame by species and loop over each group\n# # NOTE: \"group\" will be the dataframe holding the data for \"species\"\n# for species, group_df in penguins.groupby(\"species\"):\n\n#     # Plot flipper length vs bill length for this group\n#     # Note: we are adding this plot to the existing \"ax\" object\n#     ax.scatter(\n#         group_df[\"flipper_length_mm\"],\n#         group_df[\"bill_length_mm\"],\n#         marker=\"o\",\n#         label=species,\n#         color=color_map[species],\n#         alpha=0.75,\n#         zorder=10\n#     )\n\n# # Plotting is done...format the axes!\n\n# ## Add a legend to the axes\n# ax.legend(loc=\"best\")\n\n# ## Add x-axis and y-axis labels\n# ax.set_xlabel(\"Flipper Length (mm)\")\n# ax.set_ylabel(\"Bill Length (mm)\")\n\n# ## Add the grid of lines\n# ax.grid(True);\n\n\n\n\n\n\n\n\n\nHow about in pandas?\nDataFrames have a built-in “plot” function that can make all of the basic type of matplotlib plots!\nFirst, we need to add a new “color” column specifying the color to use for each species type.\nUse the pd.replace() function: it use a dict to replace values in a DataFrame column.\n\n# # Calculate a list of colors\n# color_map = {\"Adelie\": \"#1f77b4\", \"Gentoo\": \"#ff7f0e\", \"Chinstrap\": \"#D62728\"}\n\n# # Map species name to color \n# penguins[\"color\"] = penguins[\"species\"].replace(color_map)\n\n# penguins.head()\n\n\n\n\n\n\n\n\nspecies\nisland\nbill_length_mm\nbill_depth_mm\nflipper_length_mm\nbody_mass_g\nsex\nyear\ncolor\n\n\n\n\n0\nAdelie\nTorgersen\n39.1\n18.7\n181.0\n3750.0\nmale\n2007\n#1f77b4\n\n\n1\nAdelie\nTorgersen\n39.5\n17.4\n186.0\n3800.0\nfemale\n2007\n#1f77b4\n\n\n2\nAdelie\nTorgersen\n40.3\n18.0\n195.0\n3250.0\nfemale\n2007\n#1f77b4\n\n\n3\nAdelie\nTorgersen\nNaN\nNaN\nNaN\nNaN\nNaN\n2007\n#1f77b4\n\n\n4\nAdelie\nTorgersen\n36.7\n19.3\n193.0\n3450.0\nfemale\n2007\n#1f77b4\n\n\n\n\n\n\n\nNow plot!\n\n# # Same as before: Start by initializing the figure and axes\n# fig, myAxes = plt.subplots(figsize=(10, 6))\n\n# # Scatter plot two columns, colored by third\n# # Use the built-in pandas plot.scatter function\n# penguins.plot.scatter(\n#     x=\"flipper_length_mm\",\n#     y=\"bill_length_mm\",\n#     c=\"color\",\n#     alpha=0.75,\n#     ax=myAxes, # IMPORTANT: Make sure to plot on the axes object we created already!\n#     zorder=10\n# )\n\n# # Format the axes finally\n# myAxes.set_xlabel(\"Flipper Length (mm)\")\n# myAxes.set_ylabel(\"Bill Length (mm)\")\n# myAxes.grid(True);\n\n\n\n\n\n\n\n\nNote: no easy way to get legend added to the plot in this case…\n\n\nSeaborn: statistical data visualization\nSeaborn is designed to plot two columns colored by a third column…\n\n# # Initialize the figure and axes\n# fig, ax = plt.subplots(figsize=(10, 6))\n\n# # style keywords as dict\n# color_map = {\"Adelie\": \"#1f77b4\", \"Gentoo\": \"#ff7f0e\", \"Chinstrap\": \"#D62728\"}\n# style = dict(palette=color_map, s=60, edgecolor=\"none\", alpha=0.75, zorder=10)\n\n# # use the scatterplot() function\n# sns.scatterplot(\n#     x=\"flipper_length_mm\",  # the x column\n#     y=\"bill_length_mm\",  # the y column\n#     hue=\"species\",  # the third dimension (color)\n#     data=penguins,  # pass in the data\n#     ax=ax,  # plot on the axes object we made\n#     **style  # add our style keywords\n# )\n\n# # Format with matplotlib commands\n# ax.set_xlabel(\"Flipper Length (mm)\")\n# ax.set_ylabel(\"Bill Length (mm)\")\n# ax.grid(True)\n# ax.legend(loc=\"best\");",
     "crumbs": [
       "Analysis",
       "Showing static visualizations"
@@ -121,9 +121,9 @@
   {
     "objectID": "index.html",
     "href": "index.html",
-    "title": "MUSA 550: Final Project Template",
+    "title": "MUSA 550 Final Project: Para el Pueblo, Paraguas",
     "section": "",
-    "text": "We can create beautiful websites that describe complex technical analyses in Python using Quarto and deploy them online using GitHub Pages. This combination of tools is a really powerful way to create and share your work. This website is a demo that is meant to be used to create your own Quarto website for the final project in MUSA 550.\nQuarto is a relatively new tool, but is becoming popular quickly. It’s a successor to the Rmarkdown ecosystem that combines functionality into a single tool and also extends its computation power to other languages. Most importantly for us, Quarto supports executing Python code, allowing us to convert Jupyter notebooks to HTML and share them online.\n\n\n\n\n\n\nImportant\n\n\n\nThis template site, including the layout it uses, is just a suggested place to start! For your final project, you’re welcome (and encouraged) to make as many changes as you like to best fit your project.",
+    "text": "Note\n\n\n\nThis website has been developed as a class project for MUSA 5500 at the University of Pennsylvania.\n\n\nPast work has shown that inclement weather is likely to suppress protest activity. To explore this relationship, this website offers maps and data visualizations of recent weather conditions and protest activity in Mexico.",
     "crumbs": [
       "Welcome"
     ]
@@ -131,9 +131,99 @@
   {
     "objectID": "index.html#welcome",
     "href": "index.html#welcome",
-    "title": "MUSA 550: Final Project Template",
+    "title": "MUSA 550 Final Project: Para el Pueblo, Paraguas",
+    "section": "",
+    "text": "Note\n\n\n\nThis website has been developed as a class project for MUSA 5500 at the University of Pennsylvania.\n\n\nPast work has shown that inclement weather is likely to suppress protest activity. To explore this relationship, this website offers maps and data visualizations of recent weather conditions and protest activity in Mexico.",
+    "crumbs": [
+      "Welcome"
+    ]
+  },
+  {
+    "objectID": "index.html#is-protest-activity-associated-with-weather",
+    "href": "index.html#is-protest-activity-associated-with-weather",
+    "title": "MUSA 550 Final Project: Para el Pueblo, Paraguas",
     "section": "",
     "text": "We can create beautiful websites that describe complex technical analyses in Python using Quarto and deploy them online using GitHub Pages. This combination of tools is a really powerful way to create and share your work. This website is a demo that is meant to be used to create your own Quarto website for the final project in MUSA 550.\nQuarto is a relatively new tool, but is becoming popular quickly. It’s a successor to the Rmarkdown ecosystem that combines functionality into a single tool and also extends its computation power to other languages. Most importantly for us, Quarto supports executing Python code, allowing us to convert Jupyter notebooks to HTML and share them online.\n\n\n\n\n\n\nImportant\n\n\n\nThis template site, including the layout it uses, is just a suggested place to start! For your final project, you’re welcome (and encouraged) to make as many changes as you like to best fit your project.",
+    "crumbs": [
+      "Welcome"
+    ]
+  },
+  {
+    "objectID": "index.html#is-protest-activity-associated-with-weather-in-mexico",
+    "href": "index.html#is-protest-activity-associated-with-weather-in-mexico",
+    "title": "MUSA 550 Final Project: Para el Pueblo, Paraguas",
+    "section": "",
+    "text": "This website has been developed as a class project for MUSA 5500 at the University of Pennsylvania.\nPast work has shown that inclement weather is likely to suppress protest activity. To explore this relationship, this website offers maps and data visualizations of recent weather conditions and protest activity in Mexico.\n\n\n\n\n\n\nImportant\n\n\n\nThis template site, including the layout it uses, is just a suggested place to start! For your final project, you’re welcome (and encouraged) to make as many changes as you like to best fit your project.",
+    "crumbs": [
+      "Welcome"
+    ]
+  },
+  {
+    "objectID": "index.html#is-protest-activity-associated-with-weather-conditions",
+    "href": "index.html#is-protest-activity-associated-with-weather-conditions",
+    "title": "MUSA 550 Final Project: Para el Pueblo, Paraguas",
+    "section": "",
+    "text": "This website has been developed as a class project for MUSA 5500 at the University of Pennsylvania.\nPast work has shown that inclement weather is likely to suppress protest activity. To explore this relationship, this website offers maps and data visualizations of recent weather conditions and protest activity in Mexico.\n\n\n\n\n\n\nImportant\n\n\n\nThis template site, including the layout it uses, is just a suggested place to start! For your final project, you’re welcome (and encouraged) to make as many changes as you like to best fit your project.",
+    "crumbs": [
+      "Welcome"
+    ]
+  },
+  {
+    "objectID": "index.html#is-protest-activity-correlated-with-projected-rainfall",
+    "href": "index.html#is-protest-activity-correlated-with-projected-rainfall",
+    "title": "MUSA 550 Final Project: Para el Pueblo, Paraguas",
+    "section": "",
+    "text": "This website has been developed as a class project for MUSA 5500 at the University of Pennsylvania.\nPast work has shown that inclement weather is likely to suppress protest activity. To explore this relationship, this website offers maps and data visualizations of recent weather conditions and protest activity in Mexico.\n\n\n\n\n\n\nImportant\n\n\n\nThis template site, including the layout it uses, is just a suggested place to start! For your final project, you’re welcome (and encouraged) to make as many changes as you like to best fit your project.",
+    "crumbs": [
+      "Welcome"
+    ]
+  },
+  {
+    "objectID": "index.html#is-protest-activity-correlated-with-contemporaneous-rainfall",
+    "href": "index.html#is-protest-activity-correlated-with-contemporaneous-rainfall",
+    "title": "MUSA 550 Final Project: Para el Pueblo, Paraguas",
+    "section": "",
+    "text": "This website has been developed as a class project for MUSA 5500 at the University of Pennsylvania.\nPast work has shown that inclement weather is likely to suppress protest activity. To explore this relationship, this website offers maps and data visualizations of recent weather conditions and protest activity in Mexico.\n\n\n\n\n\n\nImportant\n\n\n\nThis template site, including the layout it uses, is just a suggested place to start! For your final project, you’re welcome (and encouraged) to make as many changes as you like to best fit your project.",
+    "crumbs": [
+      "Welcome"
+    ]
+  },
+  {
+    "objectID": "index.html#protest-activity-correlated-with-contemporaneous-rainfall",
+    "href": "index.html#protest-activity-correlated-with-contemporaneous-rainfall",
+    "title": "MUSA 550 Final Project: Para el Pueblo, Paraguas",
+    "section": "",
+    "text": "This website has been developed as a class project for MUSA 5500 at the University of Pennsylvania.\nPast work has shown that inclement weather is likely to suppress protest activity. To explore this relationship, this website offers maps and data visualizations of recent weather conditions and protest activity in Mexico.\n\n\n\n\n\n\nImportant\n\n\n\nThis template site, including the layout it uses, is just a suggested place to start! For your final project, you’re welcome (and encouraged) to make as many changes as you like to best fit your project.",
+    "crumbs": [
+      "Welcome"
+    ]
+  },
+  {
+    "objectID": "index.html#rain-check",
+    "href": "index.html#rain-check",
+    "title": "MUSA 550 Final Project: Para el Pueblo, Paraguas",
+    "section": "",
+    "text": "This website has been developed as a class project for MUSA 5500 at the University of Pennsylvania.\nPast work has shown that inclement weather is likely to suppress protest activity. To explore this relationship, this website offers maps and data visualizations of recent weather conditions and protest activity in Mexico.\n\n\n\n\n\n\nImportant\n\n\n\nThis template site, including the layout it uses, is just a suggested place to start! For your final project, you’re welcome (and encouraged) to make as many changes as you like to best fit your project.",
+    "crumbs": [
+      "Welcome"
+    ]
+  },
+  {
+    "objectID": "index.html#protest-activity-and-inclement-weather",
+    "href": "index.html#protest-activity-and-inclement-weather",
+    "title": "MUSA 550 Final Project: Para el Pueblo, Paraguas",
+    "section": "",
+    "text": "This website has been developed as a class project for MUSA 5500 at the University of Pennsylvania.\nPast work has shown that inclement weather is likely to suppress protest activity. To explore this relationship, this website offers maps and data visualizations of recent weather conditions and protest activity in Mexico.\n\n\n\n\n\n\nImportant\n\n\n\nThis template site, including the layout it uses, is just a suggested place to start! For your final project, you’re welcome (and encouraged) to make as many changes as you like to best fit your project.",
+    "crumbs": [
+      "Welcome"
+    ]
+  },
+  {
+    "objectID": "index.html#protest-activity-inclement-weather",
+    "href": "index.html#protest-activity-inclement-weather",
+    "title": "MUSA 550 Final Project: Para el Pueblo, Paraguas",
+    "section": "",
+    "text": "This website has been developed as a class project for MUSA 5500 at the University of Pennsylvania.\nPast work has shown that inclement weather is likely to suppress protest activity. To explore this relationship, this website offers maps and data visualizations of recent weather conditions and protest activity in Mexico.\n\n\n\n\n\n\nImportant\n\n\n\nThis template site, including the layout it uses, is just a suggested place to start! For your final project, you’re welcome (and encouraged) to make as many changes as you like to best fit your project.",
     "crumbs": [
       "Welcome"
     ]
