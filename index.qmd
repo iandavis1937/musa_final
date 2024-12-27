@@ -10,6 +10,6 @@ author: "Ian Davis"
 This website has been developed as a class project for MUSA 5500 at the University of Pennsylvania. 
 :::
 
-Past work has shown that inclement weather is likely to suppress protest activity. To explore this relationship, this website offers maps and data visualizations of recent weather conditions and protest activity in Mexico.
+Past work has shown that poor weather conditions (e.g. rain) can suppress protest activity in the United States, Spain, and Switzerland (Teeselink & Meelios, 2021; Casanueva, 2021; Meier, Schmid, & Stutzer 2019). To explore this relationship, this website offers maps and data visualizations of recent weather conditions and protest activity in Mexico.
 
 

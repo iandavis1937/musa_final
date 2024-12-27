@@ -1,129 +1,10 @@
 [
   {
-    "objectID": "about.html",
-    "href": "about.html",
-    "title": "About Me",
-    "section": "",
-    "text": "Hello!\n\n\nMy name is Ian Davis.\nI’m an early-career data scientist and public interest technologist interested in program evaluation, quantitative social science methods, and collective decision-making technology.\nSome of my most recent roles have been as a Research Assistant/Data Analyst at the University of Pennsylvania and Stanford University, as well as a Civic Digital Data Analyst Fellow at the Internal Revenue Service.\nYou can find more information about me on my personal website.\nSend me a LinkedIn message or a music rec if you like! I’m always appreciative of help escaping the recommendation algorithm.",
-    "crumbs": [
-      "About Me"
-    ]
-  },
-  {
-    "objectID": "analysis/4-folium.html",
-    "href": "analysis/4-folium.html",
-    "title": "Interactive Maps with Folium",
-    "section": "",
-    "text": "This page is generated from a Jupyter notebook and shows examples of embedding interactive maps produced using Folium.",
-    "crumbs": [
-      "Analysis",
-      "Interactive Maps with Folium"
-    ]
-  },
-  {
-    "objectID": "analysis/4-folium.html#finding-the-shortest-route",
-    "href": "analysis/4-folium.html#finding-the-shortest-route",
-    "title": "Interactive Maps with Folium",
-    "section": "Finding the shortest route",
-    "text": "Finding the shortest route\nThis example finds the shortest route between the Art Musuem and the Liberty Bell using osmnx.\n\nimport osmnx as ox\n\nFirst, identify the lat/lng coordinates for our places of interest. Use osmnx to download the geometries for the Libery Bell and Art Museum.\n\nphilly_tourism = ox.features_from_place(\"Philadelphia, PA\", tags={\"tourism\": True})\n\n\nart_museum = philly_tourism.query(\"name == 'Philadelphia Museum of Art'\").squeeze()\n\nart_museum.geometry\n\n\n\n\n\n\n\n\n\nliberty_bell = philly_tourism.query(\"name == 'Liberty Bell'\").squeeze()\n\nliberty_bell.geometry\n\n\n\n\n\n\n\n\nNow, extract the lat and lng coordinates\nFor the Art Museum geometry, we can use the .geometry.centroid attribute to calculate the centroid of the building footprint.\n\nliberty_bell_x = liberty_bell.geometry.x\nliberty_bell_y = liberty_bell.geometry.y\n\n\nart_museum_x = art_museum.geometry.centroid.x\nart_museum_y = art_museum.geometry.centroid.y\n\nNext, use osmnx to download the street graph around Center City.\n\nG_cc = ox.graph_from_address(\n    \"City Hall, Philadelphia, USA\", dist=1500, network_type=\"drive\"\n)\n\nNext, identify the nodes in the graph closest to our points of interest.\n\n# Get the origin node (Liberty Bell)\norig_node = ox.nearest_nodes(G_cc, liberty_bell_x, liberty_bell_y)\n\n# Get the destination node (Art Musuem)\ndest_node = ox.nearest_nodes(G_cc, art_museum_x, art_museum_y)\n\nFind the shortest path, based on the distance of the edges:\n\n# Get the shortest path --&gt; just a list of node IDs\nroute = ox.shortest_path(G_cc, orig_node, dest_node, weight=\"length\")\n\nHow about an interactive version?\nosmnx has a helper function ox.utils_graph.route_to_gdf() to convert a route to a GeoDataFrame of edges.\n\nox.utils_graph.route_to_gdf(G_cc, route, weight=\"length\").explore(\n    tiles=\"cartodb positron\",\n    color=\"red\",\n)\n\nMake this Notebook Trusted to load map: File -&gt; Trust Notebook",
-    "crumbs": [
-      "Analysis",
-      "Interactive Maps with Folium"
-    ]
-  },
-  {
-    "objectID": "analysis/4-folium.html#examining-trash-related-311-requests",
-    "href": "analysis/4-folium.html#examining-trash-related-311-requests",
-    "title": "Interactive Maps with Folium",
-    "section": "Examining Trash-Related 311 Requests",
-    "text": "Examining Trash-Related 311 Requests\nFirst, let’s load the dataset from a CSV file and convert to a GeoDataFrame:\n\n\nCode\n# Load the data from a CSV file into a pandas DataFrame\ntrash_requests_df = pd.read_csv(\n    \"https://raw.githubusercontent.com/MUSA-550-Fall-2023/week-4/main/data/trash_311_requests_2020.csv\"\n)\n\n# Remove rows with missing geometry\ntrash_requests_df = trash_requests_df.dropna(subset=[\"lat\", \"lon\"])\n\n\n# Create our GeoDataFrame with geometry column created from lon/lat\ntrash_requests = gpd.GeoDataFrame(\n    trash_requests_df,\n    geometry=gpd.points_from_xy(trash_requests_df[\"lon\"], trash_requests_df[\"lat\"]),\n    crs=\"EPSG:4326\",\n)\n\n\nLoad neighborhoods and do the spatial join to associate a neighborhood with each ticket:\n\n\nCode\n# Load the neighborhoods\nneighborhoods = gpd.read_file(\n    \"https://raw.githubusercontent.com/MUSA-550-Fall-2023/week-4/main/data/zillow_neighborhoods.geojson\"\n)\n\n# Do the spatial join to add the \"ZillowName\" column\nrequests_with_hood = gpd.sjoin(\n    trash_requests,\n    neighborhoods.to_crs(trash_requests.crs),\n    predicate=\"within\",\n)\n\n\nLet’s explore the 311 requests in the Greenwich neighborhood of the city:\n\n# Extract out the point tickets for Greenwich\ngreenwich_tickets = requests_with_hood.query(\"ZillowName == 'Greenwich'\")\n\n\n# Get the neighborhood boundary for Greenwich\ngreenwich_geo = neighborhoods.query(\"ZillowName == 'Greenwich'\")\n\ngreenwich_geo.squeeze().geometry\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nNote\n\n\n\nQuarto has callout blocks that you can use to emphasize content in different ways. This is a “Note” callout block. More info is available on the Quarto documentation.\n\n\nImport the packages we need:\n\nimport folium\nimport xyzservices\n\nCombine the tickets as markers and the neighborhood boundary on the same Folium map:\n\n# Plot the neighborhood boundary\nm = greenwich_geo.explore(\n    style_kwds={\"weight\": 4, \"color\": \"black\", \"fillColor\": \"none\"},\n    name=\"Neighborhood boundary\",\n    tiles=xyzservices.providers.CartoDB.Voyager,\n)\n\n\n# Add the individual tickets as circle markers and style them\ngreenwich_tickets.explore(\n    m=m,  # Add to the existing map!\n    marker_kwds={\"radius\": 7, \"fill\": True, \"color\": \"crimson\"},\n    marker_type=\"circle_marker\", # or 'marker' or 'circle'\n    name=\"Tickets\",\n)\n\n# Hse folium to add layer control\nfolium.LayerControl().add_to(m)\n\nm  # show map\n\nMake this Notebook Trusted to load map: File -&gt; Trust Notebook",
-    "crumbs": [
-      "Analysis",
-      "Interactive Maps with Folium"
-    ]
-  },
-  {
-    "objectID": "analysis/1-python-code-blocks.html",
-    "href": "analysis/1-python-code-blocks.html",
-    "title": "Python code blocks",
-    "section": "",
-    "text": "This is an example from the Quarto documentation that shows how to mix executable Python code blocks into a markdown file in a “Quarto markdown” .qmd file.\nFor a demonstration of a line plot on a polar axis, see Figure 1.\n\n\nCode\nimport numpy as np\nimport matplotlib.pyplot as plt\n\nr = np.arange(0, 2, 0.01)\ntheta = 2 * np.pi * r\nfig, ax = plt.subplots(\n  subplot_kw = {'projection': 'polar'} \n)\nax.plot(theta, r)\nax.set_rticks([0.5, 1, 1.5, 2])\nax.grid(True)\nplt.show()\n\n\n\n\n\n\n\n\nFigure 1: A line plot on a polar axis",
-    "crumbs": [
-      "Analysis",
-      "Python code blocks"
-    ]
-  },
-  {
-    "objectID": "analysis/3-altair-hvplot.html",
-    "href": "analysis/3-altair-hvplot.html",
-    "title": "Altair and Hvplot Charts",
-    "section": "",
-    "text": "This page is generated from a Jupyter notebook and shows examples of embedding interactive charts produced using Altair and hvPlot.",
-    "crumbs": [
-      "Analysis",
-      "Altair and Hvplot Charts"
-    ]
-  },
-  {
-    "objectID": "analysis/3-altair-hvplot.html#example-measles-incidence-in-altair",
-    "href": "analysis/3-altair-hvplot.html#example-measles-incidence-in-altair",
-    "title": "Altair and Hvplot Charts",
-    "section": "Example: Measles Incidence in Altair",
-    "text": "Example: Measles Incidence in Altair\nFirst, let’s load the data for measles incidence in wide format:\n\n\nCode\nurl = \"https://raw.githubusercontent.com/MUSA-550-Fall-2023/week-2/main/data/measles_incidence.csv\"\ndata = pd.read_csv(url, skiprows=2, na_values=\"-\")\n\n\n\n\n\n\n\n\n\n\n\nYEAR\nWEEK\nALABAMA\nALASKA\nARIZONA\nARKANSAS\nCALIFORNIA\nCOLORADO\nCONNECTICUT\nDELAWARE\n...\nSOUTH DAKOTA\nTENNESSEE\nTEXAS\nUTAH\nVERMONT\nVIRGINIA\nWASHINGTON\nWEST VIRGINIA\nWISCONSIN\nWYOMING\n\n\n\n\n0\n1928\n1\n3.67\nNaN\n1.90\n4.11\n1.38\n8.38\n4.50\n8.58\n...\n5.69\n22.03\n1.18\n0.4\n0.28\nNaN\n14.83\n3.36\n1.54\n0.91\n\n\n1\n1928\n2\n6.25\nNaN\n6.40\n9.91\n1.80\n6.02\n9.00\n7.30\n...\n6.57\n16.96\n0.63\nNaN\n0.56\nNaN\n17.34\n4.19\n0.96\nNaN\n\n\n2\n1928\n3\n7.95\nNaN\n4.50\n11.15\n1.31\n2.86\n8.81\n15.88\n...\n2.04\n24.66\n0.62\n0.2\n1.12\nNaN\n15.67\n4.19\n4.79\n1.36\n\n\n3\n1928\n4\n12.58\nNaN\n1.90\n13.75\n1.87\n13.71\n10.40\n4.29\n...\n2.19\n18.86\n0.37\n0.2\n6.70\nNaN\n12.77\n4.66\n1.64\n3.64\n\n\n4\n1928\n5\n8.03\nNaN\n0.47\n20.79\n2.38\n5.13\n16.80\n5.58\n...\n3.94\n20.05\n1.57\n0.4\n6.70\nNaN\n18.83\n7.37\n2.91\n0.91\n\n\n\n\n5 rows × 53 columns\n\n\n\nThen, use the pandas.melt() function to convert it to tidy format:\n\n\nCode\nannual = data.drop(\"WEEK\", axis=1)\nmeasles = annual.groupby(\"YEAR\").sum().reset_index()\nmeasles = measles.melt(id_vars=\"YEAR\", var_name=\"state\", value_name=\"incidence\")\n\n\n\n\n\n\n\n\n\n\n\nYEAR\nstate\nincidence\n\n\n\n\n0\n1928\nALABAMA\n334.99\n\n\n1\n1929\nALABAMA\n111.93\n\n\n2\n1930\nALABAMA\n157.00\n\n\n3\n1931\nALABAMA\n337.29\n\n\n4\n1932\nALABAMA\n10.21\n\n\n\n\n\n\n\nFinally, load altair:\n\nimport altair as alt\n\nAnd generate our final data viz:\n\n# use a custom color map\ncolormap = alt.Scale(\n    domain=[0, 100, 200, 300, 1000, 3000],\n    range=[\n        \"#F0F8FF\",\n        \"cornflowerblue\",\n        \"mediumseagreen\",\n        \"#FFEE00\",\n        \"darkorange\",\n        \"firebrick\",\n    ],\n    type=\"sqrt\",\n)\n\n# Vertical line for vaccination year\nthreshold = pd.DataFrame([{\"threshold\": 1963}])\n\n# plot YEAR vs state, colored by incidence\nchart = (\n    alt.Chart(measles)\n    .mark_rect()\n    .encode(\n        x=alt.X(\"YEAR:O\", axis=alt.Axis(title=None, ticks=False)),\n        y=alt.Y(\"state:N\", axis=alt.Axis(title=None, ticks=False)),\n        color=alt.Color(\"incidence:Q\", sort=\"ascending\", scale=colormap, legend=None),\n        tooltip=[\"state\", \"YEAR\", \"incidence\"],\n    )\n    .properties(width=650, height=500)\n)\n\nrule = alt.Chart(threshold).mark_rule(strokeWidth=4).encode(x=\"threshold:O\")\n\nout = chart + rule\nout",
-    "crumbs": [
-      "Analysis",
-      "Altair and Hvplot Charts"
-    ]
-  },
-  {
-    "objectID": "analysis/3-altair-hvplot.html#example-measles-incidence-in-hvplot",
-    "href": "analysis/3-altair-hvplot.html#example-measles-incidence-in-hvplot",
-    "title": "Altair and Hvplot Charts",
-    "section": "Example: Measles Incidence in hvplot",
-    "text": "Example: Measles Incidence in hvplot\n\n\n\n\n\n\n\n\n\n\n\nGenerate the same data viz in hvplot:\n\n# Make the heatmap with hvplot\nheatmap = measles.hvplot.heatmap(\n    x=\"YEAR\",\n    y=\"state\",\n    C=\"incidence\", # color each square by the incidence\n    reduce_function=np.sum, # sum the incidence for each state/year\n    frame_height=450,\n    frame_width=600,\n    flip_yaxis=True,\n    rot=90,\n    colorbar=False,\n    cmap=\"viridis\",\n    xlabel=\"\",\n    ylabel=\"\",\n)\n\n# Some additional formatting using holoviews \n# For more info: http://holoviews.org/user_guide/Customizing_Plots.html\nheatmap = heatmap.redim(state=\"State\", YEAR=\"Year\")\nheatmap = heatmap.opts(fontsize={\"xticks\": 0, \"yticks\": 6}, toolbar=\"above\")\nheatmap",
-    "crumbs": [
-      "Analysis",
-      "Altair and Hvplot Charts"
-    ]
-  },
-  {
-    "objectID": "analysis/index.html",
-    "href": "analysis/index.html",
-    "title": "Analysis",
-    "section": "",
-    "text": "Analysis\nThis section includes examples of technical analysis done using Jupyter notebooks. Each sub-section highlights different types of analyses and visualizations. In particular, it highlights that we can easily publish interactive visualizations produced with packages such as hvPlot, altair, or Folium, without losing any of the interactive features.\nOn this page, you might want to share more introductory or background information about the analyses to help guide the reader.",
-    "crumbs": [
-      "Analysis"
-    ]
-  },
-  {
-    "objectID": "analysis/2-static-images.html",
-    "href": "analysis/2-static-images.html",
-    "title": "Showing static visualizations",
-    "section": "",
-    "text": "This page is generated from a Jupyter notebook and demonstrates how to generate static visualizations with matplotlib, pandas, and seaborn.\nStart by importing the packages we need:\n\nimport requests\nimport pandas as pd\nfrom matplotlib import pyplot as plt\nimport seaborn as sns\n\n\n# # Set query parameters.\n# parameters = {\n#   \"email\": \"iandavis1937@gmail.com\",\n#   \"key\": \"HT98xlCQ1BGVditgq7fD\",\n#   \"country\": \"Mexico\", \n#   \"year\": 2023,\n#   \"fields\": \"event_id_cnty|event_date|event_type|country\",\n#   \"limit\": 3000\n# }\n\n# # Request the data as a JSON file and pass paramenters as an argument (params=)\n# response_params_dic = requests.get(\"https://api.acleddata.com/acled/read\", params= parameters)\n\n# if response_params_dic.json()['status'] == 200:\n#   print(\"Success: Take a peek to the returned JSON structure.\")\n\n# print(response_params_dic.json())\n\n{'status': 403, 'success': False, 'count': 0, 'error': {'status': 403, 'message': 'Your account is restricted to only downloading the data via the Data Export Tool. Please contact access@acleddata.com to discuss extending your access to the API.'}}\n\n\n\ndf = pd.read_csv(\"./data/2024-09-01-2024-11-26-Mexico.csv\")\nprint(df.columns)\nprint(df['location'].head())\nprint(df['geo_precision'].head())\ndf.head(n=5)\n\nIndex(['event_id_cnty', 'event_date', 'year', 'time_precision',\n       'disorder_type', 'event_type', 'sub_event_type', 'actor1',\n       'assoc_actor_1', 'inter1', 'actor2', 'assoc_actor_2', 'inter2',\n       'interaction', 'civilian_targeting', 'iso', 'region', 'country',\n       'admin1', 'admin2', 'admin3', 'location', 'latitude', 'longitude',\n       'geo_precision', 'source', 'source_scale', 'notes', 'fatalities',\n       'tags', 'timestamp', 'population_1km', 'population_2km',\n       'population_5km', 'population_best'],\n      dtype='object')\n0                  San Quintin\n1                      Tijuana\n2    San Francisco de Campeche\n3           Acapulco de Juarez\n4           Acapulco de Juarez\nName: location, dtype: object\n0    1\n1    1\n2    1\n3    2\n4    1\nName: geo_precision, dtype: int64\n\n\n\n\n\n\n\n\n\nevent_id_cnty\nevent_date\nyear\ntime_precision\ndisorder_type\nevent_type\nsub_event_type\nactor1\nassoc_actor_1\ninter1\n...\nsource\nsource_scale\nnotes\nfatalities\ntags\ntimestamp\npopulation_1km\npopulation_2km\npopulation_5km\npopulation_best\n\n\n\n\n0\nMEX95693\n22 November 2024\n2024\n2\nDemonstrations\nProtests\nPeaceful protest\nProtesters (Mexico)\nLGBTQ+ (Mexico)\nProtesters\n...\nLa Jornada\nNational\nAround 22 November 2024 (as reported), in San ...\n0\ncrowd size=no report\n1732580204\n5047.0\n5939\n15168\n5047.0\n\n\n1\nMEX95702\n22 November 2024\n2024\n2\nDemonstrations\nProtests\nPeaceful protest\nProtesters (Mexico)\nLabor Group (Mexico)\nProtesters\n...\nAFN - Tijuana; La Jornada\nSubnational-National\nAround 22 November 2024 (as reported), in Tiju...\n0\ncrowd size=no report\n1732580204\n8664.0\n51062\n54534\n8664.0\n\n\n2\nMEX95707\n22 November 2024\n2024\n2\nDemonstrations\nProtests\nPeaceful protest\nProtesters (Mexico)\nNaN\nProtesters\n...\nTribuna Campeche\nSubnational\nAround 22 November 2024 (as reported), in San ...\n0\ncrowd size=no report\n1732580204\n11992.0\n42048\n234206\n11992.0\n\n\n3\nMEX95778\n22 November 2024\n2024\n2\nDemonstrations\nProtests\nPeaceful protest\nProtesters (Mexico)\nNaN\nProtesters\n...\nEl Sol de Acapulco\nSubnational\nAround 22 November 2024 (as reported), around ...\n0\ncrowd size=no report\n1732580204\n6003.0\n24485\n53920\n6003.0\n\n\n4\nMEX95779\n22 November 2024\n2024\n2\nDemonstrations\nProtests\nPeaceful protest\nProtesters (Mexico)\nWomen (Mexico)\nProtesters\n...\nEl Sol de Acapulco\nSubnational\nAround 22 November 2024 (as reported), in Acap...\n0\ncrowd size=no report\n1732580204\n6003.0\n24485\n53920\n6003.0\n\n\n\n\n5 rows × 35 columns\n\n\n\n\n# # Setup a dict to hold colors for each species\n# color_map = {\"Adelie\": \"#1f77b4\", \"Gentoo\": \"#ff7f0e\", \"Chinstrap\": \"#D62728\"}\n\n# # Initialize the figure \"fig\" and axes \"ax\"\n# fig, ax = plt.subplots(figsize=(10, 6))\n\n# # Group the data frame by species and loop over each group\n# # NOTE: \"group\" will be the dataframe holding the data for \"species\"\n# for species, group_df in penguins.groupby(\"species\"):\n\n#     # Plot flipper length vs bill length for this group\n#     # Note: we are adding this plot to the existing \"ax\" object\n#     ax.scatter(\n#         group_df[\"flipper_length_mm\"],\n#         group_df[\"bill_length_mm\"],\n#         marker=\"o\",\n#         label=species,\n#         color=color_map[species],\n#         alpha=0.75,\n#         zorder=10\n#     )\n\n# # Plotting is done...format the axes!\n\n# ## Add a legend to the axes\n# ax.legend(loc=\"best\")\n\n# ## Add x-axis and y-axis labels\n# ax.set_xlabel(\"Flipper Length (mm)\")\n# ax.set_ylabel(\"Bill Length (mm)\")\n\n# ## Add the grid of lines\n# ax.grid(True);\n\n\n\n\n\n\n\n\n\nHow about in pandas?\nDataFrames have a built-in “plot” function that can make all of the basic type of matplotlib plots!\nFirst, we need to add a new “color” column specifying the color to use for each species type.\nUse the pd.replace() function: it use a dict to replace values in a DataFrame column.\n\n# # Calculate a list of colors\n# color_map = {\"Adelie\": \"#1f77b4\", \"Gentoo\": \"#ff7f0e\", \"Chinstrap\": \"#D62728\"}\n\n# # Map species name to color \n# penguins[\"color\"] = penguins[\"species\"].replace(color_map)\n\n# penguins.head()\n\n\n\n\n\n\n\n\nspecies\nisland\nbill_length_mm\nbill_depth_mm\nflipper_length_mm\nbody_mass_g\nsex\nyear\ncolor\n\n\n\n\n0\nAdelie\nTorgersen\n39.1\n18.7\n181.0\n3750.0\nmale\n2007\n#1f77b4\n\n\n1\nAdelie\nTorgersen\n39.5\n17.4\n186.0\n3800.0\nfemale\n2007\n#1f77b4\n\n\n2\nAdelie\nTorgersen\n40.3\n18.0\n195.0\n3250.0\nfemale\n2007\n#1f77b4\n\n\n3\nAdelie\nTorgersen\nNaN\nNaN\nNaN\nNaN\nNaN\n2007\n#1f77b4\n\n\n4\nAdelie\nTorgersen\n36.7\n19.3\n193.0\n3450.0\nfemale\n2007\n#1f77b4\n\n\n\n\n\n\n\nNow plot!\n\n# # Same as before: Start by initializing the figure and axes\n# fig, myAxes = plt.subplots(figsize=(10, 6))\n\n# # Scatter plot two columns, colored by third\n# # Use the built-in pandas plot.scatter function\n# penguins.plot.scatter(\n#     x=\"flipper_length_mm\",\n#     y=\"bill_length_mm\",\n#     c=\"color\",\n#     alpha=0.75,\n#     ax=myAxes, # IMPORTANT: Make sure to plot on the axes object we created already!\n#     zorder=10\n# )\n\n# # Format the axes finally\n# myAxes.set_xlabel(\"Flipper Length (mm)\")\n# myAxes.set_ylabel(\"Bill Length (mm)\")\n# myAxes.grid(True);\n\n\n\n\n\n\n\n\nNote: no easy way to get legend added to the plot in this case…\n\n\nSeaborn: statistical data visualization\nSeaborn is designed to plot two columns colored by a third column…\n\n# # Initialize the figure and axes\n# fig, ax = plt.subplots(figsize=(10, 6))\n\n# # style keywords as dict\n# color_map = {\"Adelie\": \"#1f77b4\", \"Gentoo\": \"#ff7f0e\", \"Chinstrap\": \"#D62728\"}\n# style = dict(palette=color_map, s=60, edgecolor=\"none\", alpha=0.75, zorder=10)\n\n# # use the scatterplot() function\n# sns.scatterplot(\n#     x=\"flipper_length_mm\",  # the x column\n#     y=\"bill_length_mm\",  # the y column\n#     hue=\"species\",  # the third dimension (color)\n#     data=penguins,  # pass in the data\n#     ax=ax,  # plot on the axes object we made\n#     **style  # add our style keywords\n# )\n\n# # Format with matplotlib commands\n# ax.set_xlabel(\"Flipper Length (mm)\")\n# ax.set_ylabel(\"Bill Length (mm)\")\n# ax.grid(True)\n# ax.legend(loc=\"best\");",
-    "crumbs": [
-      "Analysis",
-      "Showing static visualizations"
-    ]
-  },
-  {
-    "objectID": "analysis/2-static-images.html#a-simple-visualization-3-different-ways",
-    "href": "analysis/2-static-images.html#a-simple-visualization-3-different-ways",
-    "title": "Showing static visualizations",
-    "section": "A simple visualization, 3 different ways",
-    "text": "A simple visualization, 3 different ways\n\nI want to scatter flipper length vs. bill length, colored by the penguin species\n\n\nUsing matplotlib\n\n# Setup a dict to hold colors for each species\ncolor_map = {\"Adelie\": \"#1f77b4\", \"Gentoo\": \"#ff7f0e\", \"Chinstrap\": \"#D62728\"}\n\n# Initialize the figure \"fig\" and axes \"ax\"\nfig, ax = plt.subplots(figsize=(10, 6))\n\n# Group the data frame by species and loop over each group\n# NOTE: \"group\" will be the dataframe holding the data for \"species\"\nfor species, group_df in penguins.groupby(\"species\"):\n\n    # Plot flipper length vs bill length for this group\n    # Note: we are adding this plot to the existing \"ax\" object\n    ax.scatter(\n        group_df[\"flipper_length_mm\"],\n        group_df[\"bill_length_mm\"],\n        marker=\"o\",\n        label=species,\n        color=color_map[species],\n        alpha=0.75,\n        zorder=10\n    )\n\n# Plotting is done...format the axes!\n\n## Add a legend to the axes\nax.legend(loc=\"best\")\n\n## Add x-axis and y-axis labels\nax.set_xlabel(\"Flipper Length (mm)\")\nax.set_ylabel(\"Bill Length (mm)\")\n\n## Add the grid of lines\nax.grid(True);\n\n\n\n\n\n\n\n\n\n\nHow about in pandas?\nDataFrames have a built-in “plot” function that can make all of the basic type of matplotlib plots!\nFirst, we need to add a new “color” column specifying the color to use for each species type.\nUse the pd.replace() function: it use a dict to replace values in a DataFrame column.\n\n# Calculate a list of colors\ncolor_map = {\"Adelie\": \"#1f77b4\", \"Gentoo\": \"#ff7f0e\", \"Chinstrap\": \"#D62728\"}\n\n# Map species name to color \npenguins[\"color\"] = penguins[\"species\"].replace(color_map)\n\npenguins.head()\n\n\n\n\n\n\n\n\nspecies\nisland\nbill_length_mm\nbill_depth_mm\nflipper_length_mm\nbody_mass_g\nsex\nyear\ncolor\n\n\n\n\n0\nAdelie\nTorgersen\n39.1\n18.7\n181.0\n3750.0\nmale\n2007\n#1f77b4\n\n\n1\nAdelie\nTorgersen\n39.5\n17.4\n186.0\n3800.0\nfemale\n2007\n#1f77b4\n\n\n2\nAdelie\nTorgersen\n40.3\n18.0\n195.0\n3250.0\nfemale\n2007\n#1f77b4\n\n\n3\nAdelie\nTorgersen\nNaN\nNaN\nNaN\nNaN\nNaN\n2007\n#1f77b4\n\n\n4\nAdelie\nTorgersen\n36.7\n19.3\n193.0\n3450.0\nfemale\n2007\n#1f77b4\n\n\n\n\n\n\n\nNow plot!\n\n# Same as before: Start by initializing the figure and axes\nfig, myAxes = plt.subplots(figsize=(10, 6))\n\n# Scatter plot two columns, colored by third\n# Use the built-in pandas plot.scatter function\npenguins.plot.scatter(\n    x=\"flipper_length_mm\",\n    y=\"bill_length_mm\",\n    c=\"color\",\n    alpha=0.75,\n    ax=myAxes, # IMPORTANT: Make sure to plot on the axes object we created already!\n    zorder=10\n)\n\n# Format the axes finally\nmyAxes.set_xlabel(\"Flipper Length (mm)\")\nmyAxes.set_ylabel(\"Bill Length (mm)\")\nmyAxes.grid(True);\n\n\n\n\n\n\n\n\nNote: no easy way to get legend added to the plot in this case…\n\n\nSeaborn: statistical data visualization\nSeaborn is designed to plot two columns colored by a third column…\n\n# Initialize the figure and axes\nfig, ax = plt.subplots(figsize=(10, 6))\n\n# style keywords as dict\ncolor_map = {\"Adelie\": \"#1f77b4\", \"Gentoo\": \"#ff7f0e\", \"Chinstrap\": \"#D62728\"}\nstyle = dict(palette=color_map, s=60, edgecolor=\"none\", alpha=0.75, zorder=10)\n\n# use the scatterplot() function\nsns.scatterplot(\n    x=\"flipper_length_mm\",  # the x column\n    y=\"bill_length_mm\",  # the y column\n    hue=\"species\",  # the third dimension (color)\n    data=penguins,  # pass in the data\n    ax=ax,  # plot on the axes object we made\n    **style  # add our style keywords\n)\n\n# Format with matplotlib commands\nax.set_xlabel(\"Flipper Length (mm)\")\nax.set_ylabel(\"Bill Length (mm)\")\nax.grid(True)\nax.legend(loc=\"best\");",
-    "crumbs": [
-      "Analysis",
-      "Showing static visualizations"
-    ]
-  },
-  {
     "objectID": "index.html",
     "href": "index.html",
     "title": "MUSA 550 Final Project: Para el Pueblo, Paraguas",
     "section": "",
-    "text": "Note\n\n\n\nThis website has been developed as a class project for MUSA 5500 at the University of Pennsylvania.\n\n\nPast work has shown that inclement weather is likely to suppress protest activity. To explore this relationship, this website offers maps and data visualizations of recent weather conditions and protest activity in Mexico.",
+    "text": "Note\n\n\n\nThis website has been developed as a class project for MUSA 5500 at the University of Pennsylvania.\n\n\nPast work has shown that poor weather conditions (e.g. rain) can suppress protest activity in the United States, Spain, and Switzerland (Teeselink & Meelios, 2021; Casanueva, 2021; Meier, Schmid, & Stutzer 2019). To explore this relationship, this website offers maps and data visualizations of recent weather conditions and protest activity in Mexico.",
     "crumbs": [
       "Welcome"
     ]
@@ -133,99 +14,49 @@
     "href": "index.html#welcome",
     "title": "MUSA 550 Final Project: Para el Pueblo, Paraguas",
     "section": "",
-    "text": "Note\n\n\n\nThis website has been developed as a class project for MUSA 5500 at the University of Pennsylvania.\n\n\nPast work has shown that inclement weather is likely to suppress protest activity. To explore this relationship, this website offers maps and data visualizations of recent weather conditions and protest activity in Mexico.",
+    "text": "Note\n\n\n\nThis website has been developed as a class project for MUSA 5500 at the University of Pennsylvania.\n\n\nPast work has shown that poor weather conditions (e.g. rain) can suppress protest activity in the United States, Spain, and Switzerland (Teeselink & Meelios, 2021; Casanueva, 2021; Meier, Schmid, & Stutzer 2019). To explore this relationship, this website offers maps and data visualizations of recent weather conditions and protest activity in Mexico.",
     "crumbs": [
       "Welcome"
     ]
   },
   {
-    "objectID": "index.html#is-protest-activity-associated-with-weather",
-    "href": "index.html#is-protest-activity-associated-with-weather",
-    "title": "MUSA 550 Final Project: Para el Pueblo, Paraguas",
+    "objectID": "analysis.html",
+    "href": "analysis.html",
+    "title": "I. Descriptive Statistics",
     "section": "",
-    "text": "We can create beautiful websites that describe complex technical analyses in Python using Quarto and deploy them online using GitHub Pages. This combination of tools is a really powerful way to create and share your work. This website is a demo that is meant to be used to create your own Quarto website for the final project in MUSA 550.\nQuarto is a relatively new tool, but is becoming popular quickly. It’s a successor to the Rmarkdown ecosystem that combines functionality into a single tool and also extends its computation power to other languages. Most importantly for us, Quarto supports executing Python code, allowing us to convert Jupyter notebooks to HTML and share them online.\n\n\n\n\n\n\nImportant\n\n\n\nThis template site, including the layout it uses, is just a suggested place to start! For your final project, you’re welcome (and encouraged) to make as many changes as you like to best fit your project.",
+    "text": "Loading BokehJS ...\n    \n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nMake this Notebook Trusted to load map: File -&gt; Trust Notebook",
     "crumbs": [
-      "Welcome"
+      "Analysis"
     ]
   },
   {
-    "objectID": "index.html#is-protest-activity-associated-with-weather-in-mexico",
-    "href": "index.html#is-protest-activity-associated-with-weather-in-mexico",
-    "title": "MUSA 550 Final Project: Para el Pueblo, Paraguas",
+    "objectID": "analysis.html#protest-frequencies",
+    "href": "analysis.html#protest-frequencies",
+    "title": "I. Descriptive Statistics",
     "section": "",
-    "text": "This website has been developed as a class project for MUSA 5500 at the University of Pennsylvania.\nPast work has shown that inclement weather is likely to suppress protest activity. To explore this relationship, this website offers maps and data visualizations of recent weather conditions and protest activity in Mexico.\n\n\n\n\n\n\nImportant\n\n\n\nThis template site, including the layout it uses, is just a suggested place to start! For your final project, you’re welcome (and encouraged) to make as many changes as you like to best fit your project.",
+    "text": "Loading BokehJS ...\n    \n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nMake this Notebook Trusted to load map: File -&gt; Trust Notebook",
     "crumbs": [
-      "Welcome"
+      "Analysis"
     ]
   },
   {
-    "objectID": "index.html#is-protest-activity-associated-with-weather-conditions",
-    "href": "index.html#is-protest-activity-associated-with-weather-conditions",
-    "title": "MUSA 550 Final Project: Para el Pueblo, Paraguas",
-    "section": "",
-    "text": "This website has been developed as a class project for MUSA 5500 at the University of Pennsylvania.\nPast work has shown that inclement weather is likely to suppress protest activity. To explore this relationship, this website offers maps and data visualizations of recent weather conditions and protest activity in Mexico.\n\n\n\n\n\n\nImportant\n\n\n\nThis template site, including the layout it uses, is just a suggested place to start! For your final project, you’re welcome (and encouraged) to make as many changes as you like to best fit your project.",
+    "objectID": "analysis.html#weather-patterns",
+    "href": "analysis.html#weather-patterns",
+    "title": "I. Descriptive Statistics",
+    "section": "Weather Patterns",
+    "text": "Weather Patterns\n\n\n&lt;branca.element.Element at 0x1aaaf7c5ab0&gt;\n\n\n\n\n&lt;branca.element.Element at 0x1aaa7b6f310&gt;\n\n\n\n\nMake this Notebook Trusted to load map: File -&gt; Trust Notebook\n\n\n\n\n\n\n\n\n  \n\n\n\n\n\n\nMake this Notebook Trusted to load map: File -&gt; Trust Notebook\n\n\n\n\nMake this Notebook Trusted to load map: File -&gt; Trust Notebook\n\n\n\nOLS Regression Results\n\n\nDep. Variable:\nprotests_flag\nR-squared:\n0.191\n\n\nModel:\nOLS\nAdj. R-squared:\n0.188\n\n\nMethod:\nLeast Squares\nF-statistic:\n73.98\n\n\nDate:\nFri, 27 Dec 2024\nProb (F-statistic):\n0.00\n\n\nTime:\n01:51:37\nLog-Likelihood:\n-5978.5\n\n\nNo. Observations:\n19637\nAIC:\n1.210e+04\n\n\nDf Residuals:\n19563\nBIC:\n1.269e+04\n\n\nDf Model:\n73\n\n\n\n\nCovariance Type:\nHC1\n\n\n\n\n\n\n\n\n\n\n\ncoef\nstd err\nz\nP&gt;|z|\n[0.025\n0.975]\n\n\nconst\n0.3823\n0.050\n7.571\n0.000\n0.283\n0.481\n\n\nprcp\n-1.001e-05\n2.32e-05\n-0.432\n0.666\n-5.55e-05\n3.54e-05\n\n\ntavg\n0.0004\n4.87e-05\n7.309\n0.000\n0.000\n0.000\n\n\nAEROP.INTERNACIONAL\n-0.3059\n0.053\n-5.736\n0.000\n-0.410\n-0.201\n\n\nALTAR (OBS)\n-0.4592\n0.049\n-9.290\n0.000\n-0.556\n-0.362\n\n\nCHETUMAL INTL\n-0.3947\n0.051\n-7.708\n0.000\n-0.495\n-0.294\n\n\nCHIHUAHUA\n-0.2234\n0.059\n-3.770\n0.000\n-0.340\n-0.107\n\n\nCHILPANCINGO RO.\n0.0291\n0.056\n0.516\n0.606\n-0.081\n0.140\n\n\nCHOIX\n-0.3819\n0.052\n-7.344\n0.000\n-0.484\n-0.280\n\n\nCIUDAD CONSTITUCION\n-0.4609\n0.049\n-9.486\n0.000\n-0.556\n-0.366\n\n\nCIUDAD GUZMAN JAL.\n-0.4527\n0.049\n-9.270\n0.000\n-0.548\n-0.357\n\n\nCIUDAD OBREGON SON.\n-0.4755\n0.049\n-9.655\n0.000\n-0.572\n-0.379\n\n\nCIUDAD VICTORIA\n-0.3462\n0.052\n-6.680\n0.000\n-0.448\n-0.245\n\n\nCOATZACOALCOS VER.\n-0.3900\n0.053\n-7.396\n0.000\n-0.493\n-0.287\n\n\nCOLIMA\n-0.3658\n0.053\n-6.930\n0.000\n-0.469\n-0.262\n\n\nCOLONIA JUAN CARRAS\n-0.3061\n0.053\n-5.790\n0.000\n-0.410\n-0.202\n\n\nCOLOTLAN JAL.\n-0.4514\n0.049\n-9.174\n0.000\n-0.548\n-0.355\n\n\nCOMITAN CHIS.\n-0.4215\n0.050\n-8.492\n0.000\n-0.519\n-0.324\n\n\nCUERNAVACA\n-0.1223\n0.056\n-2.172\n0.030\n-0.233\n-0.012\n\n\nCULIACAN INTL\n-0.2160\n0.056\n-3.838\n0.000\n-0.326\n-0.106\n\n\nDURANGO DGO.\n-0.2801\n0.053\n-5.242\n0.000\n-0.385\n-0.175\n\n\nEJIDO NUEVO LEON (OBS)\n-0.0574\n0.058\n-0.984\n0.325\n-0.172\n0.057\n\n\nEMPALME SON.\n-0.4642\n0.049\n-9.515\n0.000\n-0.560\n-0.369\n\n\nFELIPE CARRILLO PUERTO (OBS)\n-0.4660\n0.049\n-9.495\n0.000\n-0.562\n-0.370\n\n\nFRANCISCO SARABIA\n-0.2660\n0.053\n-4.975\n0.000\n-0.371\n-0.161\n\n\nGENERAL IGNACIO P GARCIA INTL\n-0.2748\n0.056\n-4.917\n0.000\n-0.384\n-0.165\n\n\nGUADALAJARA\n-0.0995\n0.056\n-1.789\n0.074\n-0.209\n0.010\n\n\nGUANAJUATO\n-0.3395\n0.053\n-6.352\n0.000\n-0.444\n-0.235\n\n\nHACIENDA YLANG YLANG VERACRUZ\n-0.3307\n0.053\n-6.262\n0.000\n-0.434\n-0.227\n\n\nHERMANOS SERDAN INTL\n-0.0537\n0.056\n-0.966\n0.334\n-0.163\n0.055\n\n\nHIDALGO DEL PARRAL CHIH.\n-0.4551\n0.049\n-9.333\n0.000\n-0.551\n-0.360\n\n\nHUAJUAPAN DE LEON (DGE)\n-0.3833\n0.051\n-7.512\n0.000\n-0.483\n-0.283\n\n\nINGENIERO ALBERTO ACUNA ONGAY\n-0.2953\n0.054\n-5.427\n0.000\n-0.402\n-0.189\n\n\nJALAPA VER.\n0.0593\n0.056\n1.060\n0.289\n-0.050\n0.169\n\n\nJESUS TERAN INTL\n-0.4167\n0.050\n-8.355\n0.000\n-0.514\n-0.319\n\n\nLA PAZ (CITY)\n-0.2937\n0.053\n-5.565\n0.000\n-0.397\n-0.190\n\n\nLAGOS DE MORENO JAL.\n-0.3398\n0.059\n-5.745\n0.000\n-0.456\n-0.224\n\n\nLORETO\n-0.4712\n0.049\n-9.700\n0.000\n-0.566\n-0.376\n\n\nMANZANILLO\n-0.4525\n0.049\n-9.143\n0.000\n-0.550\n-0.356\n\n\nMATLAPA S.L.P.\n-0.3571\n0.054\n-6.659\n0.000\n-0.462\n-0.252\n\n\nMEXICO CITY\n0.3643\n0.053\n6.818\n0.000\n0.260\n0.469\n\n\nMONCLOVA\n-0.3882\n0.051\n-7.642\n0.000\n-0.488\n-0.289\n\n\nMONTERREY (CITY)\n-0.1768\n0.056\n-3.151\n0.002\n-0.287\n-0.067\n\n\nMORELIA MICH.\n-0.1403\n0.055\n-2.546\n0.011\n-0.248\n-0.032\n\n\nNUEVA CASAS GRANDES\n-0.4002\n0.050\n-7.980\n0.000\n-0.499\n-0.302\n\n\nOAXACA OAX.\n-0.1398\n0.056\n-2.517\n0.012\n-0.249\n-0.031\n\n\nORIZABA\n-0.0055\n0.056\n-0.098\n0.922\n-0.115\n0.104\n\n\nPACHUCA HGO.\n-0.0670\n0.056\n-1.190\n0.234\n-0.177\n0.043\n\n\nPIEDRAS NEGRAS (OBS)\n-0.4147\n0.050\n-8.279\n0.000\n-0.513\n-0.316\n\n\nPONCIANO ARRIAGA INTL\n-0.3450\n0.052\n-6.686\n0.000\n-0.446\n-0.244\n\n\nPROGRESO\n-0.4654\n0.049\n-9.506\n0.000\n-0.561\n-0.369\n\n\nPUERTO ANGEL OAX.\n-0.4575\n0.049\n-9.270\n0.000\n-0.554\n-0.361\n\n\nPUERTO PENASCO SON.\n-0.4657\n0.049\n-9.594\n0.000\n-0.561\n-0.371\n\n\nQUERETARO INTERCONTINENTAL\n-0.3313\n0.052\n-6.374\n0.000\n-0.433\n-0.229\n\n\nRIO VERDE S.L.P.\n-0.4673\n0.049\n-9.631\n0.000\n-0.562\n-0.372\n\n\nSALINA CRUZ\n-0.4183\n0.052\n-8.016\n0.000\n-0.521\n-0.316\n\n\nSALTILLO\n-0.3660\n0.051\n-7.142\n0.000\n-0.466\n-0.266\n\n\nSN. CRISTOBAL LAS CASAS CHIS\n-0.3099\n0.052\n-5.917\n0.000\n-0.413\n-0.207\n\n\nSOMBRERETE ZAC.\n-0.4443\n0.049\n-9.082\n0.000\n-0.540\n-0.348\n\n\nSOTO LA MARINA (OBS)\n-0.4007\n0.051\n-7.825\n0.000\n-0.501\n-0.300\n\n\nTAMPICO TAMPS\n-0.2582\n0.053\n-4.831\n0.000\n-0.363\n-0.153\n\n\nTAPACHULA CHIS\n-0.4325\n0.050\n-8.586\n0.000\n-0.531\n-0.334\n\n\nTEMOSACHI (OBS)\n-0.4864\n0.048\n-10.042\n0.000\n-0.581\n-0.391\n\n\nTEMOSACHIC\n-0.4382\n0.049\n-8.956\n0.000\n-0.534\n-0.342\n\n\nTEPIC (OBS)\n-0.4336\n0.049\n-8.779\n0.000\n-0.530\n-0.337\n\n\nTLAXCALA DE XICONTECATL (DGE)\n-0.3658\n0.051\n-7.146\n0.000\n-0.466\n-0.265\n\n\nTOLUCA (OBS)\n-0.1836\n0.055\n-3.313\n0.001\n-0.292\n-0.075\n\n\nTORREON INTL\n-0.3190\n0.052\n-6.100\n0.000\n-0.421\n-0.217\n\n\nTULANCINGO HGO.\n-0.3645\n0.051\n-7.095\n0.000\n-0.465\n-0.264\n\n\nTUXPAN.VER.\n-0.3099\n0.057\n-5.412\n0.000\n-0.422\n-0.198\n\n\nVALLADOLID YUC.\n-0.3411\n0.052\n-6.568\n0.000\n-0.443\n-0.239\n\n\nVILLAHERMOSA TAB.\n-0.1855\n0.057\n-3.260\n0.001\n-0.297\n-0.074\n\n\nZACATECAS ZAC. (LA BUFA ZAC\n-0.2536\n0.053\n-4.760\n0.000\n-0.358\n-0.149\n\n\nZAMORA\n-0.3339\n0.052\n-6.404\n0.000\n-0.436\n-0.232\n\n\n\n\n\n\n\n\nOmnibus:\n4712.506\nDurbin-Watson:\n1.840\n\n\nProb(Omnibus):\n0.000\nJarque-Bera (JB):\n9294.124\n\n\nSkew:\n1.470\nProb(JB):\n0.00\n\n\nKurtosis:\n4.647\nCond. No.\n2.78e+04\n\n\n\nNotes:[1] Standard Errors are heteroscedasticity robust (HC1)[2] The condition number is large, 2.78e+04. This might indicate that there arestrong multicollinearity or other numerical problems.",
     "crumbs": [
-      "Welcome"
+      "Analysis"
     ]
   },
   {
-    "objectID": "index.html#is-protest-activity-correlated-with-projected-rainfall",
-    "href": "index.html#is-protest-activity-correlated-with-projected-rainfall",
-    "title": "MUSA 550 Final Project: Para el Pueblo, Paraguas",
+    "objectID": "about.html",
+    "href": "about.html",
+    "title": "About Me",
     "section": "",
-    "text": "This website has been developed as a class project for MUSA 5500 at the University of Pennsylvania.\nPast work has shown that inclement weather is likely to suppress protest activity. To explore this relationship, this website offers maps and data visualizations of recent weather conditions and protest activity in Mexico.\n\n\n\n\n\n\nImportant\n\n\n\nThis template site, including the layout it uses, is just a suggested place to start! For your final project, you’re welcome (and encouraged) to make as many changes as you like to best fit your project.",
+    "text": "Hello!\n\n\nMy name is Ian Davis.\nI’m an early-career data scientist and public interest technologist interested in program evaluation, quantitative social science methods, and civic technology.\nSome of my most recent roles have been as a Research Assistant/Data Analyst at the University of Pennsylvania and Stanford University, as well as a Civic Digital Data Analyst Fellow at the Internal Revenue Service.\nYou can find more information about me on my personal website.\nSend me a LinkedIn message or a music rec if you like! Any help escaping the recommendation algorithm is appreciated.:)",
     "crumbs": [
-      "Welcome"
-    ]
-  },
-  {
-    "objectID": "index.html#is-protest-activity-correlated-with-contemporaneous-rainfall",
-    "href": "index.html#is-protest-activity-correlated-with-contemporaneous-rainfall",
-    "title": "MUSA 550 Final Project: Para el Pueblo, Paraguas",
-    "section": "",
-    "text": "This website has been developed as a class project for MUSA 5500 at the University of Pennsylvania.\nPast work has shown that inclement weather is likely to suppress protest activity. To explore this relationship, this website offers maps and data visualizations of recent weather conditions and protest activity in Mexico.\n\n\n\n\n\n\nImportant\n\n\n\nThis template site, including the layout it uses, is just a suggested place to start! For your final project, you’re welcome (and encouraged) to make as many changes as you like to best fit your project.",
-    "crumbs": [
-      "Welcome"
-    ]
-  },
-  {
-    "objectID": "index.html#protest-activity-correlated-with-contemporaneous-rainfall",
-    "href": "index.html#protest-activity-correlated-with-contemporaneous-rainfall",
-    "title": "MUSA 550 Final Project: Para el Pueblo, Paraguas",
-    "section": "",
-    "text": "This website has been developed as a class project for MUSA 5500 at the University of Pennsylvania.\nPast work has shown that inclement weather is likely to suppress protest activity. To explore this relationship, this website offers maps and data visualizations of recent weather conditions and protest activity in Mexico.\n\n\n\n\n\n\nImportant\n\n\n\nThis template site, including the layout it uses, is just a suggested place to start! For your final project, you’re welcome (and encouraged) to make as many changes as you like to best fit your project.",
-    "crumbs": [
-      "Welcome"
-    ]
-  },
-  {
-    "objectID": "index.html#rain-check",
-    "href": "index.html#rain-check",
-    "title": "MUSA 550 Final Project: Para el Pueblo, Paraguas",
-    "section": "",
-    "text": "This website has been developed as a class project for MUSA 5500 at the University of Pennsylvania.\nPast work has shown that inclement weather is likely to suppress protest activity. To explore this relationship, this website offers maps and data visualizations of recent weather conditions and protest activity in Mexico.\n\n\n\n\n\n\nImportant\n\n\n\nThis template site, including the layout it uses, is just a suggested place to start! For your final project, you’re welcome (and encouraged) to make as many changes as you like to best fit your project.",
-    "crumbs": [
-      "Welcome"
-    ]
-  },
-  {
-    "objectID": "index.html#protest-activity-and-inclement-weather",
-    "href": "index.html#protest-activity-and-inclement-weather",
-    "title": "MUSA 550 Final Project: Para el Pueblo, Paraguas",
-    "section": "",
-    "text": "This website has been developed as a class project for MUSA 5500 at the University of Pennsylvania.\nPast work has shown that inclement weather is likely to suppress protest activity. To explore this relationship, this website offers maps and data visualizations of recent weather conditions and protest activity in Mexico.\n\n\n\n\n\n\nImportant\n\n\n\nThis template site, including the layout it uses, is just a suggested place to start! For your final project, you’re welcome (and encouraged) to make as many changes as you like to best fit your project.",
-    "crumbs": [
-      "Welcome"
-    ]
-  },
-  {
-    "objectID": "index.html#protest-activity-inclement-weather",
-    "href": "index.html#protest-activity-inclement-weather",
-    "title": "MUSA 550 Final Project: Para el Pueblo, Paraguas",
-    "section": "",
-    "text": "This website has been developed as a class project for MUSA 5500 at the University of Pennsylvania.\nPast work has shown that inclement weather is likely to suppress protest activity. To explore this relationship, this website offers maps and data visualizations of recent weather conditions and protest activity in Mexico.\n\n\n\n\n\n\nImportant\n\n\n\nThis template site, including the layout it uses, is just a suggested place to start! For your final project, you’re welcome (and encouraged) to make as many changes as you like to best fit your project.",
-    "crumbs": [
-      "Welcome"
+      "About Me"
     ]
   }
 ]
