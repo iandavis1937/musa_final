@@ -11,10 +11,10 @@ toc: false
   <p><span style="color:black; font-weight:bold">Hello!</span></p>
   
   - My name is **Ian Davis**. 
-  - I'm an early-career data scientist and public interest technologist interested in program evaluation, quantitative social science methods, and collective decision-making technology.
+  - I'm an early-career data scientist and public interest technologist interested in program evaluation, quantitative social science methods, and civic technology.
   - Some of my most recent roles have been as a Research Assistant/Data Analyst at the University of Pennsylvania and Stanford University, as well as a Civic Digital Data Analyst Fellow at the Internal Revenue Service.
   - You can find more information about me on my [personal website](https://www.iandavis1937.com).
-  - Send me a [LinkedIn message](https://www.linkedin.com/in/ian-davis-b53364b1/) or a music rec if you like! I'm always appreciative of help escaping the algorithms.
+  - Send me a [LinkedIn message](https://www.linkedin.com/in/ian-davis-b53364b1/) or a music rec if you like! Any help escaping the recommendation algorithm is appreciated.:)
 </div>
 
 </div>

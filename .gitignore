@@ -1,1 +1,8 @@
 /.quarto/
+/archive/
+/tarballs/
+/ghcnd_all/
+ghcnd_all.tar.gz
+wdf.csv
+2023.csv.gz
+2024.csv.gz
