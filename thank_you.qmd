@@ -1,0 +1,18 @@
+---
+title: "Acknowledgements"
+toc: false
+
+bibliography: references.bib
+---
+
+<div style="display: flex; gap: 10px; align-items: flex-start;">
+
+<img src="images/profile2.1.png" alt="Ian Davis" style="width: 170px; border-radius: 10px;">
+
+<div>
+  <p><span style="color:black; font-weight:bold">Hello!</span></p>
+  
+  Thank you for all of your support this semester!! I hope you have a great 2025!
+</div>
+
+</div>
