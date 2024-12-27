@@ -1,0 +1,52 @@
+[
+  {
+    "objectID": "thank_you.html",
+    "href": "thank_you.html",
+    "title": "Acknowledgements",
+    "section": "",
+    "text": "Thank you for all of your support this semester!! I hope you have a great 2025!\n\n&lt;!DOCTYPE html PUBLIC “-//W3C//DTD XHTML 1.1//EN” “http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd”&gt;\n\n\n\n\nBibliography\n\n\n\n\n\nCasanueva, A. (2021). Can Chants in the Street Change Parliament’s Tune? The Effects of the 15M Social Movement on Spanish Elections. SSRN Electronic Journal. https://doi.org/10.2139/ssrn.3831874\n\n\n\nKlein Teeselink, B., & Melios, G. (2021). Weather to Protest: The Effect of Black Lives Matter Protests on the 2020 Presidential Election. SSRN Electronic Journal. https://doi.org/10.2139/ssrn.3809877\n\n\n\nMeier, A. N., Schmid, L., & Stutzer, A. (2019). Rain, emotions and voting for the status quo. European Economic Review, 119, 434–451. https://doi.org/10.1016/j.euroecorev.2019.07.014",
+    "crumbs": [
+      "Acknowledgements"
+    ]
+  },
+  {
+    "objectID": "analysis.html",
+    "href": "analysis.html",
+    "title": "Descriptive Statistics",
+    "section": "",
+    "text": "Loading BokehJS ...\n    \n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nMake this Notebook Trusted to load map: File -&gt; Trust Notebook\n\n\n\n\n\n\n\n\n\n\n  \n\n\n\n\n\n\n\n\n\n\n\n\n  \n\n\n\n\n\n\nAs of writing (12/26/24), the map and bar plot depict wide variation in protest frequency by location in México. The variation mirrors population density. The most important centers for protest are in the capital, México City, and east-central states like Veracruz.\nProtest frequency has also changed over time during the past year, showing notable lows around the very end of both 2023 and 2024.",
+    "crumbs": [
+      "Analysis"
+    ]
+  },
+  {
+    "objectID": "analysis.html#regression-analysis",
+    "href": "analysis.html#regression-analysis",
+    "title": "Descriptive Statistics",
+    "section": "Regression Analysis",
+    "text": "Regression Analysis\n\n\nMake this Notebook Trusted to load map: File -&gt; Trust Notebook\n\n\nTo quantify the association between protest activity and weather conditions, the unit of analysis is defined as a given weather region on a given day. Weather regions are defined by the most proximate weather station – wherever is closest to a weather station is that weather station’s corresponding region. The map above uses color to show which weather region each protest falls within.\nIn the regression analysis, the weather region is also used for a fixed effect to help control for factors such as population density, general climate (as opposed to the covariate of interest, current weather conditions), proximity to important government offices, etc. The outcome variable used is a binary indicator of whether any protest occurred in that weather region on that day.\nAs seen in the table below, the coefficient on precipitation (measured in tenths of millimeters), is very nearly 0 and not statistically significant. The coefficient on average daily temperature (measured in tenths of degrees Celsius) is significant, though very small, however. In a country where heat is often an issue, this effect is curious and requires more careful exploration.\nThere are several possible explanations for the failure to replicate prior results in the current analysis. Firstly, though many of the weather regions are plausible, several are not, leaving uncertainty as to whether the weather conditions at the weather station were similar to the weather conditions at the protest (sometimes quite far away). Secondly, in most of México, most days there are no protests so the logistic model may have struggled to account for an outcome that is rare in the vast majority of locations, but very common in just a handful of outlying locations. Moreover, the model used regional fixed effects but did not incorporate other controls (whether constant, e.g. population, or time-varying, e.g. unemployment rates or election cycle timing).Finally, much of México (perhaps especially its most populated areas), experiences rain fairly infrequently or for just a brief period of time. This may lead to less opportunity for rain (a common detractor from protest activity elsewhere) to have the same effect here.\nWarning: Maximum number of iterations has been exceeded. Current function value: 0.344241 Iterations: 35\nc:\\Users\\ianda\\.conda\\envs\\musa_final\\lib\\site-packages\\statsmodels\\base\\model.py:607: ConvergenceWarning: Maximum Likelihood optimization failed to converge. Check mle_retvals\n  warnings.warn(\"Maximum Likelihood optimization failed to \"\n\n\n\n\nOdds Ratio\n2.5% CI\n97.5% CI\nP&gt;|z|\n\n\n\n\nprcp\n1.000\n0.999\n1.000\n0.581\n\n\ntavg\n1.002\n1.001\n1.003\n0.000\n\n\nAEROP.INTERNACIONAL\n0.111\n0.076\n0.163\n0.000\n\n\nALTAR (OBS)\n0.007\n0.002\n0.030\n0.000\n\n\nCHETUMAL INTL\n0.049\n0.030\n0.079\n0.000\n\n\nCHIHUAHUA\n0.186\n0.122\n0.283\n0.000\n\n\nCHILPANCINGO RO.\n0.566\n0.419\n0.764\n0.000\n\n\nCHOIX\n0.056\n0.034\n0.092\n0.000\n\n\nCIUDAD CONSTITUCION\n0.000\n0.000\n0.000\n0.000\n\n\nCIUDAD GUZMAN JAL.\n0.003\n0.000\n0.021\n0.000\n\n\nCIUDAD OBREGON SON.\n0.005\n0.001\n0.033\n0.000\n\n\nCIUDAD VICTORIA\n0.080\n0.054\n0.119\n0.000\n\n\nCOATZACOALCOS VER.\n0.053\n0.031\n0.091\n0.000\n\n\nCOLIMA\n0.066\n0.041\n0.106\n0.000\n\n\nCOLONIA JUAN CARRAS\n0.110\n0.076\n0.160\n0.000\n\n\nCOLOTLAN JAL.\n0.007\n0.002\n0.027\n0.000\n\n\nCOMITAN CHIS.\n0.021\n0.011\n0.040\n0.000\n\n\nCUERNAVACA\n0.300\n0.217\n0.417\n0.000\n\n\nCULIACAN INTL\n0.189\n0.131\n0.273\n0.000\n\n\nDURANGO DGO.\n0.131\n0.092\n0.186\n0.000\n\n\nEJIDO NUEVO LEON (OBS)\n0.397\n0.285\n0.555\n0.000\n\n\nEMPALME SON.\n0.005\n0.002\n0.016\n0.000\n\n\nFELIPE CARRILLO PUERTO (OBS)\n0.008\n0.003\n0.023\n0.000\n\n\nFRANCISCO SARABIA\n0.144\n0.102\n0.204\n0.000\n\n\nGENERAL IGNACIO P GARCIA INTL\n0.136\n0.090\n0.204\n0.000\n\n\nGUADALAJARA\n0.342\n0.256\n0.458\n0.000\n\n\nGUANAJUATO\n0.082\n0.053\n0.129\n0.000\n\n\nHACIENDA YLANG YLANG VERACRUZ\n0.092\n0.062\n0.138\n0.000\n\n\nHERMANOS SERDAN INTL\n0.424\n0.325\n0.554\n0.000\n\n\nHIDALGO DEL PARRAL CHIH.\n0.004\n0.001\n0.015\n0.000\n\n\nHUAJUAPAN DE LEON (DGE)\n0.051\n0.032\n0.081\n0.000\n\n\nINGENIERO ALBERTO ACUNA ONGAY\n0.119\n0.080\n0.177\n0.000\n\n\nJALAPA VER.\n0.658\n0.499\n0.868\n0.003\n\n\nJESUS TERAN INTL\n0.023\n0.012\n0.044\n0.000\n\n\nLA PAZ (CITY)\n0.120\n0.084\n0.171\n0.000\n\n\nLAGOS DE MORENO JAL.\n0.078\n0.038\n0.159\n0.000\n\n\nLORETO\n0.002\n0.000\n0.012\n0.000\n\n\nMANZANILLO\n0.014\n0.006\n0.032\n0.000\n\n\nMATLAPA S.L.P.\n0.071\n0.043\n0.117\n0.000\n\n\nMEXICO CITY\n2.781\n1.993\n3.880\n0.000\n\n\nMONCLOVA\n0.050\n0.032\n0.078\n0.000\n\n\nMONTERREY (CITY)\n0.234\n0.167\n0.326\n0.000\n\n\nMORELIA MICH.\n0.285\n0.213\n0.382\n0.000\n\n\nNUEVA CASAS GRANDES\n0.033\n0.020\n0.056\n0.000\n\n\nOAXACA OAX.\n0.280\n0.206\n0.382\n0.000\n\n\nORIZABA\n0.504\n0.379\n0.669\n0.000\n\n\nPACHUCA HGO.\n0.405\n0.306\n0.534\n0.000\n\n\nPIEDRAS NEGRAS (OBS)\n0.033\n0.020\n0.055\n0.000\n\n\nPONCIANO ARRIAGA INTL\n0.075\n0.051\n0.111\n0.000\n\n\nPROGRESO\n0.007\n0.002\n0.021\n0.000\n\n\nPUERTO ANGEL OAX.\n0.014\n0.007\n0.030\n0.000\n\n\nPUERTO PENASCO SON.\n0.000\n0.000\n0.000\n0.000\n\n\nQUERETARO INTERCONTINENTAL\n0.086\n0.059\n0.126\n0.000\n\n\nRIO VERDE S.L.P.\n0.000\n0.000\n0.000\n0.000\n\n\nSALINA CRUZ\n0.037\n0.020\n0.071\n0.000\n\n\nSALTILLO\n0.059\n0.038\n0.091\n0.000\n\n\nSN. CRISTOBAL LAS CASAS CHIS\n0.103\n0.072\n0.147\n0.000\n\n\nSOMBRERETE ZAC.\n0.004\n0.001\n0.017\n0.000\n\n\nSOTO LA MARINA (OBS)\n0.045\n0.027\n0.074\n0.000\n\n\nTAMPICO TAMPS\n0.151\n0.107\n0.211\n0.000\n\n\nTAPACHULA CHIS\n0.029\n0.016\n0.052\n0.000\n\n\nTEMOSACHI (OBS)\n0.000\n0.000\n0.000\n0.000\n\n\nTEMOSACHIC\n0.000\n0.000\n0.000\n0.000\n\n\nTEPIC (OBS)\n0.018\n0.009\n0.034\n0.000\n\n\nTLAXCALA DE XICONTECATL (DGE)\n0.057\n0.037\n0.089\n0.000\n\n\nTOLUCA (OBS)\n0.238\n0.177\n0.320\n0.000\n\n\nTORREON INTL\n0.100\n0.070\n0.143\n0.000\n\n\nTULANCINGO HGO.\n0.059\n0.038\n0.092\n0.000\n\n\nTUXPAN.VER.\n0.106\n0.065\n0.173\n0.000\n\n\nVALLADOLID YUC.\n0.085\n0.058\n0.125\n0.000\n\n\nVILLAHERMOSA TAB.\n0.220\n0.153\n0.318\n0.000\n\n\nZACATECAS ZAC. (LA BUFA ZAC\n0.156\n0.115\n0.213\n0.000\n\n\nZAMORA\n0.086\n0.058\n0.128\n0.000\n\n\n\n\n\n\n\nLog-Likelihood\n-6778.803\n\n\nPseudo R-squared\n0.210\n\n\nAIC\n13703.607\n\n\nBIC\n14279.428\n\n\nNo. Observations\n19692.000",
+    "crumbs": [
+      "Analysis"
+    ]
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "MUSA 550 Final Project: Para el Pueblo, Paraguas",
+    "section": "",
+    "text": "Note\n\n\n\nThis website has been developed as a class project for MUSA 5500 at the University of Pennsylvania.\n\n\nPast work has shown that poor weather conditions (e.g. rain) can suppress protest activity in the United States, Spain, and Switzerland (Teeselink & Meelios, 2021; Casanueva, 2021; Meier, Schmid, & Stutzer 2019). To explore this relationship, this website offers maps and data visualizations of recent weather conditions and protest activity in Mexico.",
+    "crumbs": [
+      "Welcome"
+    ]
+  },
+  {
+    "objectID": "index.html#welcome",
+    "href": "index.html#welcome",
+    "title": "MUSA 550 Final Project: Para el Pueblo, Paraguas",
+    "section": "",
+    "text": "Note\n\n\n\nThis website has been developed as a class project for MUSA 5500 at the University of Pennsylvania.\n\n\nPast work has shown that poor weather conditions (e.g. rain) can suppress protest activity in the United States, Spain, and Switzerland (Teeselink & Meelios, 2021; Casanueva, 2021; Meier, Schmid, & Stutzer 2019). To explore this relationship, this website offers maps and data visualizations of recent weather conditions and protest activity in Mexico.",
+    "crumbs": [
+      "Welcome"
+    ]
+  }
+]
