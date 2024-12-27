@@ -2,6 +2,8 @@
 title: "MUSA 550 Final Project: Para el Pueblo, Paraguas"
 subtitle: "Associations Between Protest Activity and Inclement Weather in Mexico"
 author: "Ian Davis"
+
+bibliography: references.bib
 ---
 
 ## Welcome!

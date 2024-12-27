@@ -37,6 +37,8 @@ website:
       - about.qmd
       - href: analysis.ipynb
         text: Analysis
+      - href: thank_you.qmd
+        text: Acknowledgements
       
 format:
   html:
@@ -46,3 +48,5 @@ format:
     code-copy: true
     code-overflow: wrap
     toc: true
+
+bibliography: references.bib
