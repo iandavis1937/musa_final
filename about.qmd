@@ -7,7 +7,7 @@ toc: false
 
 <img src="images/profile2.1.png" alt="Ian Davis" style="width: 170px; border-radius: 10px;">
   
-  - My name is *Ian Davis*.
+  - My name is **Ian Davis**.
   - I’m an early-career data scientist and public interest technologist interested in program evaluation, quantitative social science methods, and collective decision-making technology.
   - Some of my most recent roles have been as a Research Assistant/Data Analyst at the University of Pennsylvania and Stanford University, as well as a Civic Digital Data Analyst Fellow at the Internal Revenue Service.
   - You can find more information about me on my [personal website](https://www.iandavis1937.com).
