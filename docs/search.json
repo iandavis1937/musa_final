@@ -10,6 +10,16 @@
     ]
   },
   {
+    "objectID": "about.html",
+    "href": "about.html",
+    "title": "About Me",
+    "section": "",
+    "text": "My name is Ian Davis.\nI’m an early-career data scientist and public interest technologist interested in program evaluation, quantitative social science methods, and collective decision-making technology.\nSome of my most recent roles have been as a Research Assistant/Data Analyst at the University of Pennsylvania and Stanford University, as well as a Civic Digital Data Analyst Fellow at the Internal Revenue Service.\nYou can find more information about me on my personal website.\nSend me a LinkedIn message or a music rec if you like! I’m always appreciative of help escaping the recommendation algorithm.",
+    "crumbs": [
+      "About Me"
+    ]
+  },
+  {
     "objectID": "analysis.html",
     "href": "analysis.html",
     "title": "Descriptive Statistics",
